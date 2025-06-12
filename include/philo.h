@@ -6,7 +6,7 @@
 /*   By: angsanch <angsanch@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 05:42:18 by angsanch          #+#    #+#             */
-/*   Updated: 2025/06/12 07:23:40 by angsanch         ###   ########.fr       */
+/*   Updated: 2025/06/12 17:07:23 by angsanch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,9 +41,17 @@ typedef struct philo_wrapper
 	unsigned long	thread_count;
 }	t_philo;
 
+typedef struct philo_data
+{
+	t_philo			*philo;
+	unsigned int	id;
+}	t_philo_data;
+
 int		arg_parse(t_args *args, int argc, char **argv);
 int		prepare_philo(t_philo *philo);
 void	philo_delete(t_philo *philo);
+
+void	*philosopher(void *pd);
 
 size_t	my_strlen(char const *str);
 size_t	my_intlen_base(long long nb, int base_len);

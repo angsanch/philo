@@ -6,7 +6,7 @@
 /*   By: angsanch <angsanch@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 06:50:14 by angsanch          #+#    #+#             */
-/*   Updated: 2025/06/12 07:26:52 by angsanch         ###   ########.fr       */
+/*   Updated: 2025/06/12 17:15:18 by angsanch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,30 @@ static int	prepare_mutexes(t_philo *philo)
 
 static int	prepare_threads(t_philo *philo)
 {
-	(void)philo;
+	t_philo_data	*pd;
+
+	philo->thread = malloc(sizeof(pthread_t) * philo->args.philos);
+	if (philo->thread == NULL)
+	{
+		return (0);
+	}
+	while (philo->thread_count < philo->args.philos)
+	{
+		pd = malloc(sizeof(t_philo_data) * 1);
+		if (pd == NULL)
+		{
+			return (0);
+		}
+		pd->philo = philo;
+		pd->id = philo->thread_count;
+		if (pthread_create(&philo->thread[philo->thread_count], NULL,
+				&philosopher, pd) != 0)
+		{
+			free(pd);
+			return (0);
+		}
+		philo->thread_count ++;
+	}
 	return (1);
 }
 
