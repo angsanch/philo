@@ -1,31 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   time.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: angsanch <angsanch@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/12 05:34:06 by angsanch          #+#    #+#             */
-/*   Updated: 2025/06/13 05:37:19 by angsanch         ###   ########.fr       */
+/*   Created: 2025/06/13 05:20:50 by angsanch          #+#    #+#             */
+/*   Updated: 2025/06/13 05:43:22 by angsanch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+#include <sys/time.h>
 
-int	main(int argc, char **argv)
+size_t	millis(void)
 {
-	t_philo	philo;
+	struct timeval	tv;
+	struct timezone	tz;
+	static size_t	start_sec = 0;
+	static size_t	start_usec = 0;
 
-	millis();
-	memset(&philo, 0, sizeof(t_philo));
-	if (!arg_parse(&philo.args, argc - 1, &argv[1]))
+	if (start_sec == 0)
 	{
-		return (84);
+		gettimeofday(&tv, &tz);
+		start_sec = tv.tv_sec;
+		start_usec = tv.tv_usec;
+		return (0);
 	}
-	if (!prepare_philo(&philo))
-	{
-		return (84);
-	}
-	philo_delete(&philo);
-	return (0);
+	gettimeofday(&tv, &tz);
+	return (((tv.tv_sec - start_sec) * 1000) + \
+		((tv.tv_usec - start_usec) * 0.001));
 }

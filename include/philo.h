@@ -6,7 +6,7 @@
 /*   By: angsanch <angsanch@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 05:42:18 by angsanch          #+#    #+#             */
-/*   Updated: 2025/06/12 17:07:23 by angsanch         ###   ########.fr       */
+/*   Updated: 2025/06/13 05:28:16 by angsanch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <stdlib.h>
 # include <string.h>
 # include <stdbool.h>
+# include <stdio.h>
 # include <pthread.h>
 
 typedef union args_wrapper
@@ -52,6 +53,8 @@ int		prepare_philo(t_philo *philo);
 void	philo_delete(t_philo *philo);
 
 void	*philosopher(void *pd);
+
+size_t	millis(void);
 
 size_t	my_strlen(char const *str);
 size_t	my_intlen_base(long long nb, int base_len);
