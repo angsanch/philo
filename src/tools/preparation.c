@@ -6,7 +6,7 @@
 /*   By: angsanch <angsanch@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 06:50:14 by angsanch          #+#    #+#             */
-/*   Updated: 2025/06/12 17:15:18 by angsanch         ###   ########.fr       */
+/*   Updated: 2025/07/12 13:41:05 by angsanch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,10 @@ static int	prepare_mutexes(t_philo *philo)
 			return (0);
 		}
 		philo->mutex_count ++;
+	}
+	if (pthread_mutex_init(&philo->printing, NULL) != 0)
+	{
+		return (0);
 	}
 	return (1);
 }

@@ -6,7 +6,7 @@
 /*   By: angsanch <angsanch@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 05:20:50 by angsanch          #+#    #+#             */
-/*   Updated: 2025/06/13 05:43:22 by angsanch         ###   ########.fr       */
+/*   Updated: 2025/08/29 19:06:59 by angsanch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,19 +15,27 @@
 
 size_t	millis(void)
 {
-	struct timeval	tv;
-	struct timezone	tz;
-	static size_t	start_sec = 0;
-	static size_t	start_usec = 0;
+	struct timeval				tv;
+	struct timezone				tz;
+	static struct s_time_data	data = {0, 0, false};
+	long						sec_diff;
+	long						usec_diff;
 
-	if (start_sec == 0)
+	if (!data.initialized)
 	{
 		gettimeofday(&tv, &tz);
-		start_sec = tv.tv_sec;
-		start_usec = tv.tv_usec;
+		data.start_sec = tv.tv_sec;
+		data.start_usec = tv.tv_usec;
+		data.initialized = true;
 		return (0);
 	}
 	gettimeofday(&tv, &tz);
-	return (((tv.tv_sec - start_sec) * 1000) + \
-		((tv.tv_usec - start_usec) * 0.001));
+	sec_diff = tv.tv_sec - data.start_sec;
+	usec_diff = tv.tv_usec - data.start_usec;
+	if (usec_diff < 0)
+	{
+		sec_diff --;
+		usec_diff += 1000000;
+	}
+	return ((sec_diff * 1000) + (usec_diff / 1000));
 }

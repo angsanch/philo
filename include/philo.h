@@ -6,7 +6,7 @@
 /*   By: angsanch <angsanch@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 05:42:18 by angsanch          #+#    #+#             */
-/*   Updated: 2025/06/13 05:28:16 by angsanch         ###   ########.fr       */
+/*   Updated: 2025/08/29 19:04:15 by angsanch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ typedef struct philo_wrapper
 	unsigned long	mutex_count;
 	pthread_t		*thread;
 	unsigned long	thread_count;
+	pthread_mutex_t	printing;
 }	t_philo;
 
 typedef struct philo_data
@@ -47,6 +48,13 @@ typedef struct philo_data
 	t_philo			*philo;
 	unsigned int	id;
 }	t_philo_data;
+
+struct	s_time_data
+{
+	size_t	start_sec;
+	size_t	start_usec;
+	bool	initialized;
+};
 
 int		arg_parse(t_args *args, int argc, char **argv);
 int		prepare_philo(t_philo *philo);
