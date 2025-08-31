@@ -6,7 +6,7 @@
 /*   By: angsanch <angsanch@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:09:55 by angsanch          #+#    #+#             */
-/*   Updated: 2025/08/29 18:57:03 by angsanch         ###   ########.fr       */
+/*   Updated: 2025/08/31 10:45:43 by angsanch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,14 @@ static void	philo_event(t_philo_data *pd, const char *event)
 
 static void	take_fork(t_philo_data *pd, unsigned int id)
 {
-	pthread_mutex_lock(&pd->philo->mutex[id % pd->philo->args.philos]);
+	pthread_mutex_lock(&pd->philo->thinker[id % pd->philo->args.philos].mutex);
 	philo_event(pd, "has taken a fork");
 }
 
 static void	release_fork(t_philo_data *pd, unsigned int id)
 {
-	pthread_mutex_unlock(&pd->philo->mutex[id % pd->philo->args.philos]);
+	pthread_mutex_unlock(&pd->philo->thinker[id % pd->philo->args.philos]
+		.mutex);
 }
 
 void	*philosopher(void *pd_void)

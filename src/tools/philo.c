@@ -6,7 +6,7 @@
 /*   By: angsanch <angsanch@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 07:18:10 by angsanch          #+#    #+#             */
-/*   Updated: 2025/06/24 01:32:52 by angsanch         ###   ########.fr       */
+/*   Updated: 2025/08/31 10:44:45 by angsanch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,23 +20,19 @@ void	philo_delete(t_philo *philo)
 	{
 		return ;
 	}
-	if (philo->thread)
+	if (philo->thinker)
 	{
 		while (philo->thread_count > 0)
 		{
 			philo->thread_count --;
-			pthread_join(philo->thread[philo->thread_count], &rets);
+			pthread_join(philo->thinker[philo->thread_count].thread, &rets);
 		}
-		free(philo->thread);
-	}
-	if (philo->mutex)
-	{
 		while (philo->mutex_count > 0)
 		{
 			philo->mutex_count --;
-			pthread_mutex_destroy(&philo->mutex[philo->mutex_count]);
+			pthread_mutex_destroy(&philo->thinker[philo->mutex_count].mutex);
 		}
-		free(philo->mutex);
 		pthread_mutex_destroy(&philo->printing);
+		free(philo->thinker);
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: angsanch <angsanch@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 05:42:18 by angsanch          #+#    #+#             */
-/*   Updated: 2025/08/29 19:04:15 by angsanch         ###   ########.fr       */
+/*   Updated: 2025/08/31 10:42:53 by angsanch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,16 @@
 # include <stdbool.h>
 # include <stdio.h>
 # include <pthread.h>
+
+enum e_status
+{
+	NON,
+	FORK,
+	EAT,
+	SLEEP,
+	THINK,
+	DEAD,
+};
 
 typedef union args_wrapper
 {
@@ -33,12 +43,18 @@ typedef union args_wrapper
 	unsigned int	nums[5];
 }	t_args;
 
+typedef struct s_philosopher
+{
+	pthread_mutex_t	mutex;
+	pthread_t		thread;
+	enum e_status	status;
+}	t_philosoper;
+
 typedef struct philo_wrapper
 {
 	t_args			args;
-	pthread_mutex_t	*mutex;
+	t_philosoper	*thinker;
 	unsigned long	mutex_count;
-	pthread_t		*thread;
 	unsigned long	thread_count;
 	pthread_mutex_t	printing;
 }	t_philo;
