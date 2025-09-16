@@ -6,7 +6,7 @@
 /*   By: angsanch <angsanch@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 06:50:14 by angsanch          #+#    #+#             */
-/*   Updated: 2025/08/31 10:46:34 by angsanch         ###   ########.fr       */
+/*   Updated: 2025/09/16 12:32:00 by angsanch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,13 @@ static int	prepare_mutexes(t_philo *philo)
 			return (0);
 		}
 		philo->mutex_count ++;
+		if (pthread_mutex_init(&philo->thinker[philo->mutex_count - 1]
+				.status_lock,
+				NULL) != 0)
+		{
+			return (0);
+		}
+		philo->thinker[philo->mutex_count - 1].status_init = true;
 	}
 	if (pthread_mutex_init(&philo->printing, NULL) != 0)
 	{
@@ -62,6 +69,8 @@ static int	prepare_status(t_philo *philo)
 	while (status_count < philo->args.philos)
 	{
 		philo->thinker[status_count].status = NON;
+		philo->thinker[status_count].status_init = false;
+		philo->thinker[status_count].last_eat = 0;
 		status_count ++;
 	}
 	return (1);
@@ -75,17 +84,17 @@ int	prepare_philo(t_philo *philo)
 		philo_delete(philo);
 		return (0);
 	}
+	if (!prepare_status(philo))
+	{
+		philo_delete(philo);
+		return (0);
+	}
 	if (!prepare_mutexes(philo))
 	{
 		philo_delete(philo);
 		return (0);
 	}
 	if (!prepare_threads(philo))
-	{
-		philo_delete(philo);
-		return (0);
-	}
-	if (!prepare_status(philo))
 	{
 		philo_delete(philo);
 		return (0);

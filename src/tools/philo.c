@@ -6,7 +6,7 @@
 /*   By: angsanch <angsanch@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 07:18:10 by angsanch          #+#    #+#             */
-/*   Updated: 2025/08/31 10:44:45 by angsanch         ###   ########.fr       */
+/*   Updated: 2025/09/16 06:38:13 by angsanch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,9 @@ void	philo_delete(t_philo *philo)
 		{
 			philo->mutex_count --;
 			pthread_mutex_destroy(&philo->thinker[philo->mutex_count].mutex);
+			if (philo->thinker[philo->mutex_count].status_init)
+				pthread_mutex_destroy(&philo->thinker[philo->mutex_count]
+					.status_lock);
 		}
 		pthread_mutex_destroy(&philo->printing);
 		free(philo->thinker);

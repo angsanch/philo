@@ -8,6 +8,7 @@ C_FILES	=src/main.c \
 		 src/tools/preparation.c \
 		 src/tools/philo.c \
 		 src/philo.c \
+		 src/philo_utils.c \
 		 src/tools/lib.c \
 		 src/tools/time.c \
 
