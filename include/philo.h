@@ -6,7 +6,7 @@
 /*   By: angsanch <angsanch@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 05:42:18 by angsanch          #+#    #+#             */
-/*   Updated: 2025/09/16 13:56:17 by angsanch         ###   ########.fr       */
+/*   Updated: 2025/09/16 17:08:29 by angsanch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@
 enum e_status
 {
 	NON,
-	FORK,
 	EAT,
 	SLEEP,
 	THINK,
@@ -50,7 +49,8 @@ typedef struct s_philosopher
 	pthread_t		thread;
 	enum e_status	status;
 	bool			status_init;
-	size_t			last_eat;
+	size_t			eat_start;
+	size_t			eat_end;
 }	t_philosoper;
 
 typedef struct philo_wrapper
@@ -60,6 +60,7 @@ typedef struct philo_wrapper
 	unsigned long	mutex_count;
 	unsigned long	thread_count;
 	pthread_mutex_t	printing;
+	bool			end;
 }	t_philo;
 
 typedef struct philo_data
@@ -92,5 +93,6 @@ void			philo_event(t_philo_data *pd, const char *event);
 void			take_fork(t_philo_data *pd, unsigned int id);
 void			release_fork(t_philo_data *pd, unsigned int id);
 unsigned int	get_wait(t_philosoper *thinker);
+int				wait(t_philo_data *pd, unsigned int ms);
 
 #endif
