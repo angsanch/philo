@@ -6,29 +6,60 @@
 /*   By: angsanch <angsanch@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 17:09:55 by angsanch          #+#    #+#             */
-/*   Updated: 2025/09/16 17:25:08 by angsanch         ###   ########.fr       */
+/*   Updated: 2025/09/23 01:27:52 by angsanch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
+static bool	forks_available(t_philo_data *pd)
+{
+	t_philosoper	*thinker;
+	enum e_status	status;
+	size_t	id;
+
+	id = pd->id - (pd->id % 2) + (1 - (pd->id % 2));
+	thinker = &pd->philo->thinker[id % pd->philo->args.philos];
+	pthread_mutex_lock(&thinker->status_lock);
+	status = thinker->status;
+	pthread_mutex_unlock(&thinker->status_lock);
+	return (status != EAT);
+}
+
+static int	think(t_philo_data *pd)
+{
+	t_philosoper	*thinker;
+
+	thinker = &pd->philo->thinker[pd->id];
+	if (forks_available(pd))
+		return (1);
+	philo_event(pd, "is thinking");
+	pthread_mutex_lock(&thinker->status_lock);
+	thinker->status = THINK;
+	pthread_mutex_unlock(&thinker->status_lock);
+	return (wait(pd, 0, &forks_available));
+}
+
 static int	eat(t_philo_data *pd)
 {
 	t_philosoper	*thinker;
+	size_t			fork_id;
 	int				status;
 
 	thinker = &pd->philo->thinker[pd->id];
-	take_fork(pd, pd->id + (pd->id % 2 == 0));
-	take_fork(pd, pd->id + (pd->id % 2 == 1));
+	fork_id = pd->id - (pd->id % 2);
+	if (!think(pd))
+		return (0);
+	take_fork(pd, fork_id);
+	take_fork(pd, fork_id + 1);
 	pthread_mutex_lock(&thinker->status_lock);
-	thinker->status = EAT;
 	thinker->eat_start = millis();
-	thinker->eat_end = thinker->eat_start + pd->philo->args.eat;
+	thinker->status = EAT;
 	pthread_mutex_unlock(&thinker->status_lock);
 	philo_event(pd, "is eating");
-	status = wait(pd, pd->philo->args.eat);
-	release_fork(pd, pd->id + (pd->id % 2 == 0));
-	release_fork(pd, pd->id + (pd->id % 2 == 1));
+	status = wait(pd, pd->philo->args.eat, NULL);
+	release_fork(pd, fork_id + 1);
+	release_fork(pd, fork_id);
 	return (status);
 }
 
@@ -40,59 +71,38 @@ static int	psleep(t_philo_data *pd)
 	pd->philo->thinker[pd->id].status = SLEEP;
 	pthread_mutex_unlock(&pd->philo->thinker[pd->id].status_lock);
 	philo_event(pd, "is sleeping");
-	status = wait(pd, pd->philo->args.sleep);
+	status = wait(pd, pd->philo->args.sleep, NULL);
 	return (status);
 }
 
-static int	think(t_philo_data *pd)
+static int	loop(t_philo_data *pd)
 {
-	t_philosoper	*thinker[2];
-	unsigned int	lwait;
-	unsigned int	rwait;
+	unsigned int	eaten;
 
-	thinker[1] = &pd->philo->thinker[pd->id % pd->philo->args.philos];
-	if (pd->id == 0)
-		thinker[0] = &pd->philo->thinker[pd->philo->args.philos - 1];
-	else
-		thinker[0] = &pd->philo->thinker[pd->id - 1];
-	lwait = get_wait(thinker[0]);
-	rwait = get_wait(thinker[1]);
-	if (rwait > lwait)
-		lwait = rwait;
-	if (lwait == 0)
+	eaten = 0;
+	if (pd->philo->args.eat_times == 0 && pd->philo->args.eat_times_set)
 		return (1);
-	philo_event(pd, "is thinking");
-	rwait = millis();
-	if (rwait + lwait <= pd->philo->thinker[pd->id].eat_start
-		+ pd->philo->args.die)
+	while (true)
 	{
-		return (wait(pd, lwait));
+		if (!eat(pd))
+			return (0);
+		eaten ++;
+		if (!(eaten < pd->philo->args.eat_times
+				|| !pd->philo->args.eat_times_set))
+			return (1);
+		if (!psleep(pd))
+			return (0);
 	}
-	return (wait(pd, pd->philo->thinker[pd->id].eat_start
-			+ pd->philo->args.die - rwait));
 }
 
 void	*philosopher(void *pd_void)
 {
 	t_philo_data	*pd;
-	unsigned int	eaten;
+	t_philosoper	*thinker;
 
 	pd = pd_void;
-	eaten = 0;
-	while (eaten < pd->philo->args.eat_times || !pd->philo->args.eat_times_set)
-	{
-		if (!eat(pd))
-			break ;
-		eaten ++;
-		if (!(eaten < pd->philo->args.eat_times
-			|| !pd->philo->args.eat_times_set))
-			continue ;
-		if (!psleep(pd))
-			break ;
-		if (!think(pd))
-			break ;
-	}
-	if (eaten < pd->philo->args.eat_times || !pd->philo->args.eat_times_set)
+	thinker = &pd->philo->thinker[pd->id];
+	if (!loop(pd))
 	{
 		if (!pd->philo->end)
 		{
@@ -100,6 +110,9 @@ void	*philosopher(void *pd_void)
 			pd->philo->end = true;
 		}
 	}
+	pthread_mutex_lock(&thinker->status_lock);
+	thinker->status = DEAD;
+	pthread_mutex_unlock(&thinker->status_lock);
 	free(pd);
 	return (NULL);
 }

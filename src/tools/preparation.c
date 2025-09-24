@@ -6,7 +6,7 @@
 /*   By: angsanch <angsanch@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 06:50:14 by angsanch          #+#    #+#             */
-/*   Updated: 2025/09/16 15:32:34 by angsanch         ###   ########.fr       */
+/*   Updated: 2025/09/23 01:30:12 by angsanch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,10 +69,9 @@ static int	prepare_status(t_philo *philo)
 	philo->end = false;
 	while (status_count < philo->args.philos)
 	{
-		philo->thinker[status_count].status = NON;
+		philo->thinker[status_count].status = THINK;
 		philo->thinker[status_count].status_init = false;
 		philo->thinker[status_count].eat_start = 0;
-		philo->thinker[status_count].eat_end = 0;
 		status_count ++;
 	}
 	return (1);

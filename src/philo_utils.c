@@ -6,7 +6,7 @@
 /*   By: angsanch <angsanch@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 07:06:33 by angsanch          #+#    #+#             */
-/*   Updated: 2025/09/16 17:23:38 by angsanch         ###   ########.fr       */
+/*   Updated: 2025/09/22 03:47:26 by angsanch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,45 +33,29 @@ void	release_fork(t_philo_data *pd, unsigned int id)
 		.mutex);
 }
 
-unsigned int	get_wait(t_philosoper *thinker)
+int	wait(t_philo_data *pd, unsigned int ms, bool (*condition)(t_philo_data *))
 {
-	unsigned int	result;
-	unsigned int	time;
-
-	pthread_mutex_lock(&thinker->status_lock);
-	time = millis();
-	if (thinker->status == SLEEP || thinker->status == THINK)
-		result = 0;
-	else
-	{
-		if (thinker->eat_end < time)
-			result = 0;
-		else
-			result = thinker->eat_end - time;
-	}
-	pthread_mutex_unlock(&thinker->status_lock);
-	return (result);
-}
-
-int	wait(t_philo_data *pd, unsigned int ms)
-{
-	unsigned int	time;
+	size_t			time;
 	unsigned int	end;
-	t_philosoper	*thinker;
+	t_philosoper	*think;
 
 	time = millis();
 	end = time + ms;
-	thinker = &pd->philo->thinker[pd->id];
-	while (time < end)
+	think = &pd->philo->thinker[pd->id];
+	while (time < end || ms == 0)
 	{
-		usleep(1000);
-		pthread_mutex_lock(&thinker->status_lock);
-		if (pd->philo->end || \
-			thinker->eat_start + pd->philo->args.die < millis())
+		usleep(250);
+		pthread_mutex_lock(&think->status_lock);
+		if (pd->philo->end || think->eat_start + pd->philo->args.die < millis())
 		{
+			think->status = DEAD;
+			pthread_mutex_unlock(&think->status_lock);
 			return (0);
 		}
-		pthread_mutex_unlock(&thinker->status_lock);
+		pthread_mutex_unlock(&think->status_lock);
+		if (condition)
+			if (condition(pd))
+				return (1);
 		time = millis();
 	}
 	return (1);

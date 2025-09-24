@@ -6,7 +6,7 @@
 /*   By: angsanch <angsanch@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 05:42:18 by angsanch          #+#    #+#             */
-/*   Updated: 2025/09/16 17:08:29 by angsanch         ###   ########.fr       */
+/*   Updated: 2025/09/21 07:31:20 by angsanch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@
 
 enum e_status
 {
-	NON,
 	EAT,
 	SLEEP,
 	THINK,
@@ -50,7 +49,6 @@ typedef struct s_philosopher
 	enum e_status	status;
 	bool			status_init;
 	size_t			eat_start;
-	size_t			eat_end;
 }	t_philosoper;
 
 typedef struct philo_wrapper
@@ -76,23 +74,23 @@ struct	s_time_data
 	bool	initialized;
 };
 
-int				arg_parse(t_args *args, int argc, char **argv);
-int				prepare_philo(t_philo *philo);
-void			philo_delete(t_philo *philo);
+int		arg_parse(t_args *args, int argc, char **argv);
+int		prepare_philo(t_philo *philo);
+void	philo_delete(t_philo *philo);
 
-void			*philosopher(void *pd);
+void	*philosopher(void *pd);
 
-size_t			millis(void);
+size_t	millis(void);
 
-size_t			my_strlen(char const *str);
-size_t			my_intlen_base(long long nb, int base_len);
-int				my_getnbr_base(char const *str, char const *base);
-int				my_strcmp(char const *s1, char const *s2);
+size_t	my_strlen(char const *str);
+size_t	my_intlen_base(long long nb, int base_len);
+int		my_getnbr_base(char const *str, char const *base);
+int		my_strcmp(char const *s1, char const *s2);
 
-void			philo_event(t_philo_data *pd, const char *event);
-void			take_fork(t_philo_data *pd, unsigned int id);
-void			release_fork(t_philo_data *pd, unsigned int id);
-unsigned int	get_wait(t_philosoper *thinker);
-int				wait(t_philo_data *pd, unsigned int ms);
+void	philo_event(t_philo_data *pd, const char *event);
+void	take_fork(t_philo_data *pd, unsigned int id);
+void	release_fork(t_philo_data *pd, unsigned int id);
+int		wait(t_philo_data *pd, unsigned int ms,
+			bool (*condition)(t_philo_data *));
 
 #endif
