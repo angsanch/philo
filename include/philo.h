@@ -6,7 +6,7 @@
 /*   By: angsanch <angsanch@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 05:42:18 by angsanch          #+#    #+#             */
-/*   Updated: 2025/09/21 07:31:20 by angsanch         ###   ########.fr       */
+/*   Updated: 2025/09/30 07:23:43 by angsanch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ typedef struct s_philosopher
 	pthread_mutex_t	status_lock;
 	pthread_mutex_t	mutex;
 	pthread_t		thread;
+	unsigned int	fork[2];
 	enum e_status	status;
 	bool			status_init;
 	size_t			eat_start;
@@ -92,5 +93,10 @@ void	take_fork(t_philo_data *pd, unsigned int id);
 void	release_fork(t_philo_data *pd, unsigned int id);
 int		wait(t_philo_data *pd, unsigned int ms,
 			bool (*condition)(t_philo_data *));
+
+int		eat(t_philo_data *pd);
+int		psleep(t_philo_data *pd);
+int		loop(t_philo_data *pd);
+int		loner(t_philo_data *pd);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: angsanch <angsanch@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 06:50:14 by angsanch          #+#    #+#             */
-/*   Updated: 2025/09/23 01:30:12 by angsanch         ###   ########.fr       */
+/*   Updated: 2025/09/30 02:59:27 by angsanch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,14 +64,26 @@ static int	prepare_threads(t_philo *philo)
 static int	prepare_status(t_philo *philo)
 {
 	unsigned long	status_count;
+	t_philosoper	*thinker;
 
 	status_count = 0;
 	philo->end = false;
 	while (status_count < philo->args.philos)
 	{
-		philo->thinker[status_count].status = THINK;
-		philo->thinker[status_count].status_init = false;
-		philo->thinker[status_count].eat_start = 0;
+		thinker = &philo->thinker[status_count];
+		if (status_count % 2)
+		{
+			thinker->fork[0] = (status_count + 1) % philo->args.philos;
+			thinker->fork[1] = status_count;
+		}
+		else
+		{
+			thinker->fork[1] = (status_count + 1) % philo->args.philos;
+			thinker->fork[0] = status_count;
+		}
+		thinker->status = THINK;
+		thinker->status_init = false;
+		thinker->eat_start = 0;
 		status_count ++;
 	}
 	return (1);

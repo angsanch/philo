@@ -6,7 +6,7 @@
 /*   By: angsanch <angsanch@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/16 07:06:33 by angsanch          #+#    #+#             */
-/*   Updated: 2025/09/22 03:47:26 by angsanch         ###   ########.fr       */
+/*   Updated: 2025/09/30 07:25:38 by angsanch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,8 @@
 void	philo_event(t_philo_data *pd, const char *event)
 {
 	pthread_mutex_lock(&pd->philo->printing);
-	printf("%lu %u %s\n", millis(), pd->id + 1, event);
+	if (!pd->philo->end)
+		printf("%lu %u %s\n", millis(), pd->id + 1, event);
 	pthread_mutex_unlock(&pd->philo->printing);
 }
 

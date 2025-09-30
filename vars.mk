@@ -9,6 +9,7 @@ C_FILES	=src/main.c \
 		 src/tools/philo.c \
 		 src/philo.c \
 		 src/philo_utils.c \
+		 src/loops.c \
 		 src/tools/lib.c \
 		 src/tools/time.c \
 
